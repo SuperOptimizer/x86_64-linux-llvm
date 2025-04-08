@@ -1,3 +1,5 @@
+#needs a recent llvm-toolchain. on ubuntu use https://apt.llvm.org/llvm.sh and download all packages for v 21
+
 #!/usr/bin/env bash
 set -euo pipefail
 # Configuration
