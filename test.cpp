@@ -1,4 +1,4 @@
-#sysroot/bin/clang -target x86_64-linux-llvm ./test.c  -static
+#./sysroot/bin/clang++ -target x86_64-linux-llvm ./hello.cpp -std=c++23 -static
 
 #include <iostream>
 #include <string>
