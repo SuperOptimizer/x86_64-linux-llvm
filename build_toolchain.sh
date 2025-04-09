@@ -16,7 +16,7 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 
 # Clone Linux kernel and install headers
-if [ ! -d "${SRC_DIR}/llvm" ]; then
+if [ ! -d "${SRC_DIR}/llvm-project" ]; then
     cd "${SRC_DIR}"
     git clone --depth 1 https://github.com/SuperOptimizer/llvm-project.git
 fi
