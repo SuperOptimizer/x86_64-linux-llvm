@@ -144,7 +144,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/runtimes" \
 -DLLVM_INCLUDE_TESTS=OFF \
 -DLLVM_INCLUDE_TOOLS=ON \
 -DLLVM_INSTALL_UTILS=OFF \
--DLLVM_LIBC_FULL_BUILD=ON \
+-DLLVM_LIBC_FULL_BUILD=OFF \
 -DLLVM_LIBC_INCLUDE_SCUDO=ON \
 -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
 -DLLVM_UNREACHABLE_OPTIMIZE=ON \
@@ -206,7 +206,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/runtimes" \
 -DRUNTIMES_x86_64-linux-musl_LIBUNWIND_ENABLE_STATIC=ON \
 -DRUNTIMES_x86_64-linux-musl_LIBUNWIND_ENABLE_THREADS=OFF \
 -DRUNTIMES_x86_64-linux-musl_LIBUNWIND_USE_COMPILER_RT=ON \
--DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_FULL_BUILD=ON \
+-DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_FULL_BUILD=OFF \
 -DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_INCLUDE_SCUDO=ON \
 -DRUNTIMES_x86_64-linux-musl_SANITIZER_USE_STATIC_CXX_ABI=ON \
 -DRUNTIMES_x86_64-linux-musl_SANITIZER_USE_STATIC_LLVM_UNWINDER=ON \
@@ -249,12 +249,12 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
 -DCMAKE_CXX_COMPILER="clang++-21" \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DCMAKE_CXX_FLAGS=" -w -Os -g0  --sysroot ${SYSROOT_DIR} -isystem ${SYSROOT_DIR}/include/c++/v1 -target x86_64-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
+-DCMAKE_CXX_FLAGS=" -w -Os -g0 -nostdinc -nostdinc++  --sysroot ${SYSROOT_DIR} -isystem ${SYSROOT_DIR}/include/c++/v1 -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  -target x86_64-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
 -DCMAKE_CXX_STANDARD=20 \
 -DCMAKE_CXX_COMPILER_WORKS=1 \
 -DCMAKE_C_COMPILER="clang-21" \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
--DCMAKE_C_FLAGS=" -w -Os -g0  --sysroot ${SYSROOT_DIR} -target x86_64-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
+-DCMAKE_C_FLAGS=" -w -Os -g0 -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include --sysroot ${SYSROOT_DIR} -target x86_64-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
 -DCMAKE_C_COMPILER_WORKS=1 \
 -DCMAKE_EXE_LINKER_FLAGS="  --sysroot ${SYSROOT_DIR} -target x86_64-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
 -DCMAKE_INSTALL_PREFIX="${SYSROOT_DIR}" \
@@ -332,7 +332,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DLLVM_INCLUDE_TESTS=OFF \
 -DLLVM_INCLUDE_TOOLS=ON \
 -DLLVM_INSTALL_UTILS=OFF \
--DLLVM_LIBC_FULL_BUILD=ON \
+-DLLVM_LIBC_FULL_BUILD=OFF \
 -DLLVM_LIBC_INCLUDE_SCUDO=ON \
 -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
 -DLLVM_UNREACHABLE_OPTIMIZE=ON \
@@ -394,7 +394,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DRUNTIMES_x86_64-linux-musl_LIBUNWIND_ENABLE_STATIC=ON \
 -DRUNTIMES_x86_64-linux-musl_LIBUNWIND_ENABLE_THREADS=OFF \
 -DRUNTIMES_x86_64-linux-musl_LIBUNWIND_USE_COMPILER_RT=ON \
--DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_FULL_BUILD=ON \
+-DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_FULL_BUILD=OFF \
 -DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_INCLUDE_SCUDO=ON \
 -DRUNTIMES_x86_64-linux-musl_SANITIZER_USE_STATIC_CXX_ABI=ON \
 -DRUNTIMES_x86_64-linux-musl_SANITIZER_USE_STATIC_LLVM_UNWINDER=ON \
@@ -402,12 +402,12 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER="clang++-21" \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSROOT="${SYSROOT_DIR}" \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS=" --sysroot ${SYSROOT_DIR}   -w -Os -g0 -target x86_66-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
+-DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="  -isystem ${SYSROOT_DIR}/include/c++/v1 -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include --sysroot ${SYSROOT_DIR} -nostdinc -nostdinc++  -w -Os -g0 -target x86_66-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_STANDARD=20 \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_WORKS=1 \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER="clang-21" \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS=" --sysroot ${SYSROOT_DIR} -w -Os -g0  -target x86_66-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
+-DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS=" -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include --sysroot ${SYSROOT_DIR} -nostdinc -nostdinc++ -w -Os -g0  -target x86_66-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_WORKS=1 \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_EXE_LINKER_FLAGS=" --sysroot ${SYSROOT_DIR} -target x86_66-linux-musl -unwind=libunwind -stdlib=libc++ --rtlib=compiler-rt  " \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_PREFIX="${SYSROOT_DIR}"
