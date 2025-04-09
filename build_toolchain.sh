@@ -149,13 +149,13 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DCMAKE_CXX_COMPILER=clang++-21 \
 -DCMAKE_CXX_COMPILER_WORKS=1 \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DCMAKE_CXX_FLAGS=" -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++   " \
+-DCMAKE_CXX_FLAGS=" --sysroot ${SYSROOT_DIR} -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++   " \
 -DCMAKE_CXX_STANDARD=20 \
 -DCMAKE_C_COMPILER=clang-21 \
 -DCMAKE_C_COMPILER_WORKS=1 \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
--DCMAKE_C_FLAGS=" -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt " \
--DCMAKE_EXE_LINKER_FLAGS=" -static -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++ " \
+-DCMAKE_C_FLAGS=" --sysroot ${SYSROOT_DIR} -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt " \
+-DCMAKE_EXE_LINKER_FLAGS=" --sysroot ${SYSROOT_DIR} -static -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++ " \
 -DCMAKE_INSTALL_PREFIX="${SYSROOT2_DIR}" \
 -DLIBC_ENABLE_USE_BY_CLANG=OFF \
 -DLLVM_CCACHE_BUILD=ON \
@@ -185,12 +185,12 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_SYSROOT="${SYSROOT_DIR}" \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_COMPILER=clang++-21 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_FLAGS=" -w -Os -g0    " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_FLAGS="--sysroot ${SYSROOT_DIR}  -w -Os -g0    " \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_STANDARD=20 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_C_COMPILER=clang-21 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_C_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_C_FLAGS=" -w -Os -g0   " \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_EXE_LINKER_FLAGS="  " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_C_FLAGS=" --sysroot ${SYSROOT_DIR} -w -Os -g0   " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_EXE_LINKER_FLAGS=" --sysroot ${SYSROOT_DIR}  " \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_BUILTINS=ON \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_CRT=ON \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_GWP_ASAN=OFF                       \
