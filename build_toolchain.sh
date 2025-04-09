@@ -129,6 +129,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/runtimes" \
 
 ninja
 ninja   install
+ninja install-libc-headers
 
 
 # Continue with the runtime build
