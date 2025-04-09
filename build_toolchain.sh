@@ -111,6 +111,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DLLVM_ENABLE_LLVM_LIBC=ON \
 -DLLVM_ENABLE_MODULES=OFF \
 -DLLVM_ENABLE_RTTI=OFF \
+-DLLVM_ENABLE_PROJECTS="clang;lld" \
 -DLLVM_ENABLE_RUNTIMES="libc;compiler-rt;libunwind;libcxx;libcxxabi" \
 -DLLVM_ENABLE_THREADS=OFF \
 -DLLVM_ENABLE_UNWIND_TABLES=OFF \
