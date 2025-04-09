@@ -118,8 +118,8 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/runtimes" \
 -DSANITIZER_USE_STATIC_LLVM_UNWINDER=ON
 
 
-ninja -k 0
-ninja -k 0  install
+ninja
+ninja   install
 
 
 # Continue with the runtime build
