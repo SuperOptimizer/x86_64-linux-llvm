@@ -56,6 +56,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DCOMPILER_RT_BUILD_ORC=OFF \
 -DCOMPILER_RT_BUILD_PROFILE=OFF \
 -DCOMPILER_RT_BUILD_SANITIZERS=ON        \
+-DCOMPILER_RT_BUILD_MEMPROF=OFF \
 -DCOMPILER_RT_BUILD_SCUDO_STANDALONE_WITH_LLVM_LIBC=ON \
 -DCOMPILER_RT_BUILD_XRAY=OFF \
 -DCOMPILER_RT_CXX_LIBRARY=libcxx \
@@ -127,6 +128,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DLLVM_LIBC_INCLUDE_SCUDO=ON \
 -DLLVM_STATIC_LINK_CXX_STDLIB=ON \
 -DLLVM_UNREACHABLE_OPTIMIZE=ON \
+-DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_MEMPROF=OFF \
 -DRUNTIMES_x86_64-linux-gnu_LIBC_CONF_ERRNO_MODE=LIBC_ERRNO_MODE_SHARED \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_BUILTINS=ON \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_CRT=ON \
@@ -247,12 +249,12 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_SYSROOT="${SYSROOT_DIR}" \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_COMPILER=clang++-21 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_FLAGS=" -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1/  -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  --sysroot ${SYSROOT_DIR}  -w -Os -g0    " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_FLAGS=" -static -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1/  -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  --sysroot ${SYSROOT_DIR}  -w -Os -g0    " \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_STANDARD=20 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_C_COMPILER=clang-21 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_C_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_C_FLAGS=" -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  --sysroot ${SYSROOT_DIR} -w -Os -g0   " \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_EXE_LINKER_FLAGS=" --sysroot ${SYSROOT_DIR}  " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_C_FLAGS=" -static -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  --sysroot ${SYSROOT_DIR} -w -Os -g0   " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_EXE_LINKER_FLAGS=" -static  --sysroot ${SYSROOT_DIR}  " \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_BUILTINS=ON \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_CRT=ON \
 -DRUNTIMES_x86_64-linux-gnu_COMPILER_RT_BUILD_GWP_ASAN=OFF                       \
