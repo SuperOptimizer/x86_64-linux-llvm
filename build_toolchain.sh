@@ -138,12 +138,12 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
 -DCMAKE_CXX_COMPILER=clang++-21 \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DCMAKE_CXX_FLAGS=" -w -Os -g0    " \
+-DCMAKE_CXX_FLAGS=" -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++   " \
 -DCMAKE_CXX_STANDARD=20 \
 -DCMAKE_C_COMPILER=clang-21 \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
--DCMAKE_C_FLAGS=" -w -Os -g0 " \
--DCMAKE_EXE_LINKER_FLAGS="  " \
+-DCMAKE_C_FLAGS=" -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt " \
+-DCMAKE_EXE_LINKER_FLAGS=" -static -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++ " \
 -DCMAKE_INSTALL_PREFIX="${SYSROOT2_DIR}" \
 -DLIBC_ENABLE_USE_BY_CLANG=OFF \
 -DLLVM_CCACHE_BUILD=ON \
