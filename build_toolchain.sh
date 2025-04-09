@@ -13,16 +13,22 @@ SYSROOT2_DIR="${HOME_DIR}/sysroot2"
 TOOLCHAIN_DIR="${HOME_DIR}/toolchain"
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
-#-DCLANG_DEFAULT_CXX_STDLIB=libc++ \
- #-DCLANG_DEFAULT_LINKER=lld \
- #-DCLANG_DEFAULT_RTLIB=compiler-rt \
- #-DCLANG_DEFAULT_UNWINDLIB=libunwind \
 
+
+# Clone Linux kernel and install headers
+if [ ! -d "${SRC_DIR}/llvm" ]; then
+    cd "${SRC_DIR}"
+    git clone --depth 1 https://github.com/SuperOptimizer/llvm-project.git
+fi
 
 # Continue with the runtime build
 mkdir -p "${WORK_DIR}/toolchain-build"
 cd "${WORK_DIR}/toolchain-build"
 cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
+-DCLANG_DEFAULT_CXX_STDLIB=libc++ \
+-DCLANG_DEFAULT_LINKER=lld \
+-DCLANG_DEFAULT_RTLIB=compiler-rt \
+-DCLANG_DEFAULT_UNWINDLIB=libunwind \
 -DBUILD_SHARED_LIBS=OFF \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
 -DCMAKE_CXX_COMPILER=clang++-21 \
