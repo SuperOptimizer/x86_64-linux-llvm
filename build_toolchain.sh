@@ -128,5 +128,5 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DRUNTIMES_x86_64-linux-gnu_SANITIZER_USE_STATIC_LLVM_UNWINDER=ON
 
 
-ninja
-ninja  install
+ninja -k 0
+ninja -k 0  install
