@@ -25,14 +25,14 @@ cd "${WORK_DIR}/toolchain-build"
 cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DBUILD_SHARED_LIBS=OFF \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
--DCMAKE_CXX_COMPILER="${SYSROOT_DIR}/usr/bin/g++" \
+-DCMAKE_CXX_COMPILER=clang++-21 \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DCMAKE_CXX_FLAGS=" -w -Os -g0  -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/usr/include/c++/15.0.1/  -isystem ${SYSROOT_DIR}/usr/include/c++/15.0.1/x86_64-pc-linux-gnu/ -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include -isystem ${SYSROOT_DIR}/usr/lib/gcc/x86_64-pc-linux-gnu/15.0.1/include  " \
+-DCMAKE_CXX_FLAGS=" -w -Os -g0    " \
 -DCMAKE_CXX_STANDARD=20 \
--DCMAKE_C_COMPILER="${SYSROOT_DIR}/usr/bin/gcc" \
+-DCMAKE_C_COMPILER=clang-21 \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
 -DCMAKE_C_FLAGS=" -w -Os -g0 " \
--DCMAKE_EXE_LINKER_FLAGS="  -nostdinc  -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include -isystem ${SYSROOT_DIR}/usr/lib/gcc/x86_64-pc-linux-gnu/15.0.1/include " \
+-DCMAKE_EXE_LINKER_FLAGS="  " \
 -DCMAKE_INSTALL_PREFIX="${SYSROOT_DIR}" \
 -DCMAKE_SYSROOT="${SYSROOT_DIR}" \
 -DLIBC_ENABLE_USE_BY_CLANG=ON \
