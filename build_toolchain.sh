@@ -189,8 +189,8 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 
 
 
-ninja
-ninja   install
+ninja -k 0
+ninja -k 0  install
 
 
 # Continue with the runtime build
