@@ -185,7 +185,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_SYSROOT="${SYSROOT_DIR}" \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_COMPILER=clang++-21 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
--DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_FLAGS=" -nostdinc -nostdinc++ -isystem ${SYSROOT}/include/c++/v1/  -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  --sysroot ${SYSROOT_DIR}  -w -Os -g0    " \
+-DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_FLAGS=" -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1/  -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include  --sysroot ${SYSROOT_DIR}  -w -Os -g0    " \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_CXX_STANDARD=20 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_C_COMPILER=clang-21 \
 -DRUNTIMES_x86_64-linux-gnu_CMAKE_C_COMPILER_LAUNCHER=ccache \
