@@ -13,7 +13,15 @@ SYSROOT2_DIR="${HOME_DIR}/sysroot2"
 TOOLCHAIN_DIR="${HOME_DIR}/toolchain"
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
+# Clone Linux kernel and install headers
+if [ ! -d "${SRC_DIR}/linux" ]; then
+    cd "${SRC_DIR}"
+    git clone --depth 1 https://github.com/torvalds/linux.git
+fi
 
+# Install kernel headers to sysroot
+cd "${SRC_DIR}/linux"
+make headers_install ARCH=x86_64 INSTALL_HDR_PATH="${SYSROOT_DIR}/usr"
 
 # Clone Linux kernel and install headers
 if [ ! -d "${SRC_DIR}/llvm-project" ]; then
