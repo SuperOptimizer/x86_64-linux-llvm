@@ -40,11 +40,11 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DCLANG_DEFAULT_RTLIB=compiler-rt \
 -DCLANG_DEFAULT_UNWINDLIB=libunwind \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
--DCMAKE_CXX_COMPILER=clang++-21 \
+-DCMAKE_CXX_COMPILER="clang++-21" \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
 -DCMAKE_CXX_FLAGS=" -w -Os -g0    " \
 -DCMAKE_CXX_STANDARD=20 \
--DCMAKE_C_COMPILER=clang-21 \
+-DCMAKE_C_COMPILER="clang-21" \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
 -DCMAKE_C_FLAGS=" -w -Os -g0   " \
 -DCMAKE_EXE_LINKER_FLAGS="  " \
@@ -149,12 +149,12 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-unknown-linux-gnu \
 -DBUILD_SHARED_LIBS=OFF \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
--DCMAKE_CXX_COMPILER=clang++-21 \
+-DCMAKE_CXX_COMPILER="${SYSROOT_DIR}/bin/clang++" \
 -DCMAKE_CXX_COMPILER_WORKS=1 \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
 -DCMAKE_CXX_FLAGS=" -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1/ -isystem ${SYSROOT_DIR}/include/x86_64-unknown-linux-gnu/c++/v1/  -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include -isystem ${SYSROOT_DIR}/lib/clang/21/include/  --sysroot ${SYSROOT_DIR} -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt -stdlib=libc++   " \
 -DCMAKE_CXX_STANDARD=20 \
--DCMAKE_C_COMPILER=clang-21 \
+-DCMAKE_C_COMPILER="${SYSROOT_DIR}/bin/clang" \
 -DCMAKE_C_COMPILER_WORKS=1 \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
 -DCMAKE_C_FLAGS=" -nostdinc -nostdinc++ -isystem ${SYSROOT_DIR}/include -isystem ${SYSROOT_DIR}/usr/include --sysroot ${SYSROOT_DIR} -isystem ${SYSROOT_DIR}/lib/clang/21/include/ -static -w -Os -g0 -unwind=libunwind --rtlib=compiler-rt " \
