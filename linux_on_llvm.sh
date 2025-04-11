@@ -12,8 +12,8 @@ KERNEL_DIR="${SRC_DIR}/linux"
 CONFIG_FILE="kernel_config.conf"
 export ARCH=x86_64
 
-NO_WARNINGS_SUS=" -Wno-sign-conversion -Wno-shorten-64-to-32 -Wno-sign-compare "
-NO_WARNINGS_COOL=" -Wno-reserved-macro-identifier -Wno-unsafe-buffer-usage -Wno-documentation -Wno-documentation-unknown-command -Wno-reserved-identifier "
+NO_WARNINGS_SUS=" -Wno-string-conversion -Wno-class-varargs -Wno-array-bounds-pointer-arithmetic -Wno-alloca -Wno-bitfield-enum-conversion -Wno-anon-enum-enum-conversion -Wno-format-nonliteral -Wno-assign-enum -Wno-missing-variable-declarations -Wno-conditional-uninitialized -Wno-format-non-iso -Wno-format -Wno-switch-enum -Wno-bad-function-cast -Wno-tautological-value-range-compare -Wno-duplicate-enum -Wno-implicit-int-conversion -Wno-switch-default  -Wno-cast-align -Wno-cast-qual -Wno-sign-conversion -Wno-shorten-64-to-32 -Wno-sign-compare "
+NO_WARNINGS_COOL=" -Wno-unreachable-code-break -Wno-unused-macros -Wno-comma -Wno-extra-semi-stmt  -Wno-compound-token-split-by-space -Wno-shadow -Wno-unreachable-code-return -Wno-unused-parameter -Wno-unreachable-code -Wno-covered-switch-default -Wno-redundant-parens -Wno-declaration-after-statement  -Wno-used-but-marked-unused -Wno-packed -Wno-c++98-compat -Wno-c2y-extensions -Wno-pedantic -Wno-pre-c11-compat -Wno-language-extension-token -Wno-c++-compat -Wno-disabled-macro-expansion -Wno-keyword-macro -Wno-c23-compat -Wno-variadic-macros -Wno-reserved-macro-identifier -Wno-unsafe-buffer-usage  -Wno-padded -Wno-missing-noreturn -Wno-gnu-conditional-omitted-operand -Wno-documentation -Wno-documentation-unknown-command -Wno-reserved-identifier "
 NO_WARNINGS=" -Wno-error -Weverything ${NO_WARNINGS_COOL} ${NO_WARNINGS_SUS}   "
 
 # Define LLVM toolchain variables
@@ -55,7 +55,7 @@ make -j${NUM_CORES} LLVM=1 \
     HOSTCXX="clang++-21" \
     HOSTAR=${LLVM_AR} \
     HOSTLD=${LLVM_LD} \
-    HOSTCFLAGS=" ${NO_WARNINGS} " \
+    HOSTCFLAGS=" -w " \
     HOSTLDFLAGS="" \
     KBUILD_HOSTLDFLAGS="" \
     CFLAGS_KERNEL=" ${NO_WARNINGS}   " \
@@ -111,7 +111,7 @@ make -j${NUM_CORES} LLVM=1 \
     HOSTCXX="clang++-21" \
     HOSTAR=${LLVM_AR} \
     HOSTLD=${LLVM_LD} \
-    HOSTCFLAGS=" ${NO_WARNINGS} " \
+    HOSTCFLAGS="  " \
     HOSTLDFLAGS="" \
     KBUILD_HOSTLDFLAGS="" \
     CFLAGS_KERNEL="  ${NO_WARNINGS}  " \
