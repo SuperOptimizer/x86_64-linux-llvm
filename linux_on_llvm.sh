@@ -6,7 +6,7 @@
 SCRIPT_DIR="${HOME}/x86_64-linux-llvm"
 SRC_DIR="${HOME}/src"
 BUILD_DIR="${HOME}/build"
-INSTALL_DIR="${HOME}/sysroot"
+SYSROOT_DIR="${HOME}/sysroot"
 NUM_CORES=$(nproc)
 KERNEL_DIR="${SRC_DIR}/linux"
 export ARCH=x86_64
@@ -16,18 +16,29 @@ NO_WARNINGS_COOL=" -Wno-implicit-int-float-conversion -Wno-misleading-indentatio
 NO_WARNINGS=" -Wno-error -Weverything ${NO_WARNINGS_COOL} ${NO_WARNINGS_SUS}   "
 
 # Define LLVM toolchain variables
-LLVM_CC="clang-21"
-LLVM_LD="ld.lld-21"
-LLVM_AR="llvm-ar-21"
-LLVM_NM="llvm-nm-21"
-LLVM_STRIP="llvm-strip-21"
-LLVM_OBJCOPY="llvm-objcopy-21"
-LLVM_OBJDUMP="llvm-objdump-21"
-LLVM_READELF="llvm-readelf-21"
+HOST_CC="clang-21"
+HOST_LD="ld.lld-21"
+HOST_AR="llvm-ar-21"
+HOST_NM="llvm-nm-21"
+HOST_STRIP="llvm-strip-21"
+HOST_OBJCOPY="llvm-objcopy-21"
+HOST_OBJDUMP="llvm-objdump-21"
+HOST_READELF="llvm-readelf-21"
+
+TARGET_CC="${SYSROOT_DIR}/bin/clang"
+TARGET_LD="${SYSROOT_DIR}/bin/ld.lld"
+TARGET_AR="${SYSROOT_DIR}/bin/llvm-ar"
+TARGET_NM="${SYSROOT_DIR}/bin/llvm-nm"
+TARGET_STRIP="${SYSROOT_DIR}/bin/llvm-strip"
+TARGET_OBJCOPY="${SYSROOT_DIR}/bin/llvm-objcopy"
+TARGET_OBJDUMP="${SYSROOT_DIR}/bin/llvm-objdump"
+TARGET_READELF="${SYSROOT_DIR}/bin/llvm-readelf"
+
+
+CFLAGS_KERNEL=" ${NO_WARNINGS} -O3  "
 
 mkdir -p "${BUILD_DIR}"
 mkdir -p "${SRC_DIR}"
-mkdir -p "${INSTALL_DIR}"
 
 echo "Building the kernel..."
 
@@ -42,22 +53,23 @@ make mrproper
 
 # Make base KVM guest config
 make -j${NUM_CORES} LLVM=1 \
-    CC=${LLVM_CC} \
-    LD=${LLVM_LD} \
-    AR=${LLVM_AR} \
-    NM=${LLVM_NM} \
-    STRIP=${LLVM_STRIP} \
-    OBJCOPY=${LLVM_OBJCOPY} \
-    OBJDUMP=${LLVM_OBJDUMP} \
-    READELF=${LLVM_READELF} \
-    HOSTCC=${LLVM_CC} \
-    HOSTCXX="clang++-21" \
-    HOSTAR=${LLVM_AR} \
-    HOSTLD=${LLVM_LD} \
+    CC=${TARGET_CC} \
+    LD=${TARGET_LD} \
+    AR=${TARGET_AR} \
+    NM=${TARGET_NM} \
+    STRIP=${TARGET_STRIP} \
+    OBJCOPY=${TARGET_OBJCOPY} \
+    OBJDUMP=${TARGET_OBJDUMP} \
+    READELF=${TARGET_READELF} \
+    HOSTCC=${HOST_CC} \
+    HOSTCXX=${HOST_CXX} \
+    HOSTAR=${HOST_AR} \
+    HOSTLD=${HOST_LD} \
+    LLVM_IAS=1 \
     HOSTCFLAGS=" ${NO_WARNINGS} " \
     HOSTLDFLAGS="" \
     KBUILD_HOSTLDFLAGS="" \
-    CFLAGS_KERNEL=" ${NO_WARNINGS}   " \
+    CFLAGS_KERNEL="${CFLAGS_KERNEL}" \
     CROSS_COMPILE="" \
     LDFLAGS_vmlinux=" -z max-page-size=0x200000  " \
     kvm_guest.config
@@ -93,6 +105,24 @@ CONFIG_BLK_DEV_RAM_SIZE=65536
 CONFIG_RD_GZIP=y
 CONFIG_DEVTMPFS=y
 CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_MODULE_COMPRESS=y
+CONFIG_TRANSPARENT_HUGEPAGE=y
+CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=y
+CONFIG_MCORE2=y
+CONFIG_X86_INTEL_PSTATE=y
+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
+CONFIG_SCHED_MC=y
+CONFIG_SCHED_SMT=y
+CONFIG_NUMA_BALANCING=y
+CONFIG_MQ_IOCTL=y
+CONFIG_BLK_WBT=y
+CONFIG_BLK_WBT_MQ=y
+CONFIG_SLUB=y
+CONFIG_SLUB_CPU_PARTIAL=y
+CONFIG_DEBUG_KERNEL=n
+CONFIG_DEBUG_INFO=n
+CONFIG_CPU_FREQ=y
+CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
 EOF
 
 # Update the config
@@ -100,22 +130,23 @@ make olddefconfig
 
 # Build the kernel (bzImage) with LLVM
 make -j${NUM_CORES} LLVM=1 \
-    CC=${LLVM_CC} \
-    LD=${LLVM_LD} \
-    AR=${LLVM_AR} \
-    NM=${LLVM_NM} \
-    STRIP=${LLVM_STRIP} \
-    OBJCOPY=${LLVM_OBJCOPY} \
-    OBJDUMP=${LLVM_OBJDUMP} \
-    READELF=${LLVM_READELF} \
-    HOSTCC=${LLVM_CC} \
-    HOSTCXX="clang++-21" \
-    HOSTAR=${LLVM_AR} \
-    HOSTLD=${LLVM_LD} \
+    CC=${TARGET_CC} \
+    LD=${TARGET_LD} \
+    AR=${TARGET_AR} \
+    NM=${TARGET_NM} \
+    STRIP=${TARGET_STRIP} \
+    OBJCOPY=${TARGET_OBJCOPY} \
+    OBJDUMP=${TARGET_OBJDUMP} \
+    READELF=${TARGET_READELF} \
+    HOSTCC=${HOST_CC} \
+    HOSTCXX=${HOST_CXX} \
+    HOSTAR=${HOST_AR} \
+    HOSTLD=${HOST_LD} \
+    LLVM_IAS=1 \
     HOSTCFLAGS=" ${NO_WARNINGS}  " \
     HOSTLDFLAGS="" \
     KBUILD_HOSTLDFLAGS="" \
-    CFLAGS_KERNEL="  ${NO_WARNINGS}  " \
+    CFLAGS_KERNEL="${CFLAGS_KERNEL}" \
     CROSS_COMPILE="" \
     LDFLAGS_vmlinux=" -z max-page-size=0x200000 " \
     bzImage
@@ -146,16 +177,23 @@ fi
 cd "${BUSYBOX_DIR}"
 make distclean
 make -j${NUM_CORES} \
-         CC=${LLVM_CC} \
-         HOSTCC=${LLVM_CC} \
-         LD=${LLVM_LD} \
-         AR=${LLVM_AR} \
-         NM=${LLVM_NM} \
-         STRIP=${LLVM_STRIP} \
-         OBJCOPY=${LLVM_OBJCOPY} \
-         OBJDUMP=${LLVM_OBJDUMP} \
-         CFLAGS=" --rtlib=compiler-rt -unwind=libunwind ${NO_WARNINGS} " \
-         defconfig
+  CC=${TARGET_CC} \
+  LD=${TARGET_LD} \
+  AR=${TARGET_AR} \
+  NM=${TARGET_NM} \
+  STRIP=${TARGET_STRIP} \
+  OBJCOPY=${TARGET_OBJCOPY} \
+  OBJDUMP=${TARGET_OBJDUMP} \
+  READELF=${TARGET_READELF} \
+  HOSTCC=${HOST_CC} \
+  HOSTCXX=${HOST_CXX} \
+  HOSTAR=${HOST_AR} \
+  HOSTLD=${HOST_LD} \
+  STRIP=${LLVM_STRIP} \
+  OBJCOPY=${LLVM_OBJCOPY} \
+  OBJDUMP=${LLVM_OBJDUMP} \
+  CFLAGS=" --rtlib=compiler-rt -unwind=libunwind ${NO_WARNINGS} " \
+  defconfig
 
 # Configure BusyBox for static build
 sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config
