@@ -12,6 +12,10 @@ KERNEL_DIR="${SRC_DIR}/linux"
 CONFIG_FILE="kernel_config.conf"
 export ARCH=x86_64
 
+NO_WARNINGS_SUS=" -Wno-sign-conversion -Wno-shorten-64-to-32 -Wno-sign-compare "
+NO_WARNINGS_COOL=" -Wno-reserved-macro-identifier -Wno-unsafe-buffer-usage -Wno-documentation -Wno-documentation-unknown-command -Wno-reserved-identifier "
+NO_WARNINGS=" -Wno-error -Weverything ${NO_WARNINGS_COOL} ${NO_WARNINGS_SUS}   "
+
 # Define LLVM toolchain variables
 LLVM_CC="clang-21"
 LLVM_LD="ld.lld-21"
@@ -51,10 +55,10 @@ make -j${NUM_CORES} LLVM=1 \
     HOSTCXX="clang++-21" \
     HOSTAR=${LLVM_AR} \
     HOSTLD=${LLVM_LD} \
-    HOSTCFLAGS="-w" \
+    HOSTCFLAGS=" ${NO_WARNINGS} " \
     HOSTLDFLAGS="" \
     KBUILD_HOSTLDFLAGS="" \
-    CFLAGS_KERNEL="-w" \
+    CFLAGS_KERNEL=" ${NO_WARNINGS}   " \
     CROSS_COMPILE="" \
     LDFLAGS_vmlinux=" -z max-page-size=0x200000  " \
     kvm_guest.config
@@ -107,10 +111,10 @@ make -j${NUM_CORES} LLVM=1 \
     HOSTCXX="clang++-21" \
     HOSTAR=${LLVM_AR} \
     HOSTLD=${LLVM_LD} \
-    HOSTCFLAGS="-w" \
+    HOSTCFLAGS=" ${NO_WARNINGS} " \
     HOSTLDFLAGS="" \
     KBUILD_HOSTLDFLAGS="" \
-    CFLAGS_KERNEL="-w" \
+    CFLAGS_KERNEL="  ${NO_WARNINGS}  " \
     CROSS_COMPILE="" \
     LDFLAGS_vmlinux=" -z max-page-size=0x200000 " \
     bzImage
@@ -135,11 +139,6 @@ cd "${BUILD_DIR}"
 # Clone BusyBox Git repository
 if [ ! -d "busybox-git" ]; then
     git clone "${BUSYBOX_GIT}" busybox-git
-else
-    # Update if already cloned
-    cd busybox-git
-    git pull
-    cd ..
 fi
 
 # Configure and build BusyBox statically with LLVM toolchain
@@ -161,7 +160,7 @@ make -j${NUM_CORES} \
     STRIP=${LLVM_STRIP} \
     OBJCOPY=${LLVM_OBJCOPY} \
     OBJDUMP=${LLVM_OBJDUMP} \
-    CFLAGS="-w"
+    CFLAGS="-w --rtlib=compiler-rt -unwind=libunwind -Wno-error -Weverything "
 
 make install CONFIG_PREFIX="${INITRAMFS_DIR}"
 
