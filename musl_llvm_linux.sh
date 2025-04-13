@@ -605,7 +605,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DLIBCXX_ENABLE_TIME_ZONE_DATABASE=ON \
 -DLIBCXX_ENABLE_UNICODE=ON \
 -DLIBCXX_ENABLE_WIDE_CHARACTERS=ON \
--DLLVM_ENABLE_LTO=FULL \
+-DLLVM_ENABLE_LTO=Thin \
 -DLLVM_ENABLE_FATLTO=ON \
 -DLIBCXX_HAS_MUSL_LIBC=ON \
 -DLIBCXX_HAS_PTHREAD_API=ON \
@@ -674,7 +674,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DLLVM_TARGETS_TO_BUILD=X86 \
 -DLLVM_TARGET_ARCH="X86" \
 -DLLVM_UNREACHABLE_OPTIMIZE=ON  \
--DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_LTO=FULL \
+-DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_LTO=THIN \
 -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_FATLTO=ON \
 -DRUNTIMES_x86_64-linux-musl_CMAKE_EXE_LINKER_FLAGS=" -Wl,--threads=4 -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static  -L${SYSROOT_DIR}/lib/x86_64-unknown-linux-musl/ -static-libgcc  " \
 -DRUNTIMES_x86_64-linux-musl_LIBCXXABI_ENABLE_SHARED=OFF \
@@ -827,6 +827,7 @@ NO_WARNINGS=" -Wno-error -Weverything ${NO_WARNINGS_COOL} ${NO_WARNINGS_SUS}   "
 
 # Define LLVM toolchain variables
 HOST_CC="clang-21"
+HOST_CXX="clang++-21"
 HOST_LD="ld.lld-21"
 HOST_AR="llvm-ar-21"
 HOST_NM="llvm-nm-21"
