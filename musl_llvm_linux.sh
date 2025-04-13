@@ -302,7 +302,7 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 -DCMAKE_CXX_COMPILER=clang++-21 \
 -DCMAKE_CXX_COMPILER_WORKS=1 \
 -DCMAKE_C_COMPILER_WORKS=1 \
--DCMAKE_EXE_LINKER_FLAGS=" -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static -L${SYSROOT_DIR}/lib/x86_64-unknown-linux-musl/ -static-libgcc " \
+-DCMAKE_EXE_LINKER_FLAGS=" -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static -L${SYSROOT_DIR}/lib/x86_64-unknown-linux-musl/ -static-libgcc -static " \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
 -DCMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
 -DCMAKE_CXX_FLAGS="-w -g0  -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR} -nostdinc++  -isystem ${SYSROOT_DIR}/include/c++/v1 -isystem ${SYSROOT_DIR}/include/x86_64-unknown-linux-musl/c++/v1/ -static -static-libgcc "  \
@@ -766,3 +766,4 @@ cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
 
 ninja -k 0
 ninja -k 0 install
+
