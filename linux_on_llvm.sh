@@ -189,9 +189,6 @@ make -j${NUM_CORES} \
   HOSTCXX=${HOST_CXX} \
   HOSTAR=${HOST_AR} \
   HOSTLD=${HOST_LD} \
-  STRIP=${LLVM_STRIP} \
-  OBJCOPY=${LLVM_OBJCOPY} \
-  OBJDUMP=${LLVM_OBJDUMP} \
   CFLAGS=" --rtlib=compiler-rt -unwind=libunwind ${NO_WARNINGS} " \
   defconfig
 
@@ -201,14 +198,14 @@ sed -i 's/CONFIG_TC=y/CONFIG_TC=n/' .config
 
 # Build with the same LLVM toolchain as the kernel
 make -j${NUM_CORES} \
-    CC=${LLVM_CC} \
-    HOSTCC=${LLVM_CC} \
-    LD=${LLVM_LD} \
-    AR=${LLVM_AR} \
-    NM=${LLVM_NM} \
-    STRIP=${LLVM_STRIP} \
-    OBJCOPY=${LLVM_OBJCOPY} \
-    OBJDUMP=${LLVM_OBJDUMP} \
+    CC=${TARGET_CC} \
+    HOSTCC=${HOST_CC} \
+    LD=${TARGET_LD} \
+    AR=${TARGET_AR} \
+    NM=${TARGET_NM} \
+    STRIP=${TARGET_STRIP} \
+    OBJCOPY=${TARGET_OBJCOPY} \
+    OBJDUMP=${TARGET_OBJDUMP} \
     CFLAGS=" --rtlib=compiler-rt -unwind=libunwind ${NO_WARNINGS} "
 
 make install CONFIG_PREFIX="${INITRAMFS_DIR}"
