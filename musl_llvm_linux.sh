@@ -11,7 +11,7 @@ TOOLCHAIN_DIR="${HOME_DIR}/toolchain"
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
 # Create necessary directories if they don't exist
-mkdir -p "${SRC_DIR}" "${SYSROOT_DIR}" "${SYSROOT_DIR}/usr" "${TOOLCHAIN_DIR}" "${TOOLCHAIN_DIR}/usr"
+mkdir -p "${SRC_DIR}" "${SYSROOT_DIR}" "${SYSROOT_DIR}/bin/" "${SYSROOT_DIR}/usr" "${TOOLCHAIN_DIR}" "${TOOLCHAIN_DIR}/usr"
 
 if [ ! -d "${SRC_DIR}/linux" ]; then
     cd "${SRC_DIR}"
@@ -29,6 +29,9 @@ if [ ! -d "${SRC_DIR}/musl" ]; then
     git clone --depth 1https://github.com/SuperOptimizer/musl.git
 fi
 
+cp "${SCRIPT_DIR}/musl-clang" "${SYSROOT_DIR}/bin/"
+cp "${SCRIPT_DIR}/musl-clang++" "${SYSROOT_DIR}/bin/"
+
 
 if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
 
@@ -45,10 +48,13 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   CC=clang CFLAGS="-O2 -flto=full -ffat-lto-objects -static " ./configure --prefix="${SYSROOT_DIR}" --disable-shared
   make -j${JOBS} CC=clang
   make install
+  cp "${SCRIPT_DIR}/musl-clang" "${SYSROOT_DIR}/bin/"
+  cp "${SCRIPT_DIR}/musl-clang++" "${SYSROOT_DIR}/bin/"
 
   mkdir -p "${WORK_DIR}/stage1-build"
   cd "${WORK_DIR}/stage1-build"
   cmake -G Ninja "${SRC_DIR}/llvm-project/runtimes" \
+  -DCMAKE_SYSTEM_NAME="Linux" \
   -DBUILD_SHARED_LIBS=OFF  \
   -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
   -DCLANG_DEFAULT_LINKER=lld \
@@ -64,13 +70,13 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DCMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
   -DCMAKE_CXX_COMPILER_WORKS=1 \
-  -DCMAKE_CXX_FLAGS="-w -g0  -march=native  "  \
+  -DCMAKE_CXX_FLAGS="-w -g0  -march=x86-64-v3  "  \
   -DCMAKE_CXX_STANDARD=20 \
   -DCMAKE_C_COMPILER=clang-21 \
   -DCMAKE_C_COMPILER_LAUNCHER=ccache \
   -DCMAKE_C_COMPILER_TARGET="x86_64-linux-musl" \
   -DCMAKE_C_COMPILER_WORKS=1 \
-  -DCMAKE_C_FLAGS="-w -g0 -march=native " \
+  -DCMAKE_C_FLAGS="-w -g0 -march=x86-64-v3 " \
   -DCMAKE_INSTALL_PREFIX="${SYSROOT_DIR}" \
   -DCMAKE_INSTALL_RPATH="\$ORIGIN/../lib" \
   -DCMAKE_SYSROOT="${SYSROOT_DIR}" \
@@ -179,7 +185,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_INCLUDE_EXAMPLES=OFF \
   -DLLVM_INCLUDE_TESTS=OFF \
   -DLLVM_INCLUDE_TOOLS=ON \
-  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+  -DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF \
   -DLLVM_INSTALL_UTILS=OFF \
   -DLLVM_LIBC_FULL_BUILD=OFF \
   -DLLVM_LIBC_INCLUDE_SCUDO=OFF \
@@ -191,18 +197,19 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_TARGETS_TO_BUILD=X86 \
   -DLLVM_TARGET_ARCH="X86" \
   -DLLVM_UNREACHABLE_OPTIMIZE=ON  \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSTEM_NAME="Linux" \
   -DRUNTIMES_x86_64-linux-musl_BUILD_SHARED_LIBS=OFF \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_BUILD_TYPE=MinSizeRel \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_BUILD_WITH_INSTALL_RPATH=ON \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER=clang++-21 \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="-w -g0  -march=native  "  \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="-w -g0  -march=x86-64-v3  "  \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_STANDARD=20 \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER=clang-21 \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_LAUNCHER=ccache \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_TARGET="x86_64-linux-musl" \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS="-w -g0 -march=native " \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS="-w -g0 -march=x86-64-v3 " \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_PREFIX="${SYSROOT_DIR}" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_RPATH="\$ORIGIN/../lib" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSROOT="${SYSROOT_DIR}" \
@@ -299,6 +306,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   mkdir -p "${WORK_DIR}/stage2-build"
   cd "${WORK_DIR}/stage2-build"
   cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
+  -DCMAKE_SYSTEM_NAME="Linux" \
   -DBUILD_SHARED_LIBS=OFF  \
   -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
   -DCLANG_DEFAULT_LINKER=lld \
@@ -314,14 +322,14 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DCMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
   -DCMAKE_CXX_COMPILER_WORKS=1 \
-  -DCMAKE_CXX_FLAGS="-w -g0  -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}  -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1 "  \
+  -DCMAKE_CXX_FLAGS="-w -g0  -march=x86-64-v3 -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}  -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1 "  \
   -DCMAKE_CXX_STANDARD=20 \
   -DCMAKE_C_COMPILER=clang-21 \
   -DCMAKE_C_COMPILER_LAUNCHER=ccache \
   -DCMAKE_C_COMPILER_TARGET="x86_64-linux-musl" \
   -DCMAKE_C_COMPILER_WORKS=1 \
-  -DCMAKE_C_FLAGS="-w -g0 -march=native   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
-  -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--threads=8  --sysroot ${SYSROOT_DIR}  -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static  -static-libgcc -static " \
+  -DCMAKE_C_FLAGS="-w -g0 -march=x86-64-v3   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
+  -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--threads=8  --sysroot ${SYSROOT_DIR}  -march=x86-64-v3 -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static  -static-libgcc -static " \
   -DCMAKE_INSTALL_PREFIX="${SYSROOT_DIR}" \
   -DCMAKE_INSTALL_RPATH="\$ORIGIN/../lib" \
   -DCMAKE_SYSROOT="${SYSROOT_DIR}" \
@@ -431,7 +439,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_INCLUDE_EXAMPLES=OFF \
   -DLLVM_INCLUDE_TESTS=OFF \
   -DLLVM_INCLUDE_TOOLS=ON \
-  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+  -DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF \
   -DLLVM_INSTALL_UTILS=OFF \
   -DLLVM_LIBC_FULL_BUILD=OFF \
   -DLLVM_LIBC_INCLUDE_SCUDO=OFF \
@@ -443,19 +451,20 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_TARGETS_TO_BUILD=X86 \
   -DLLVM_TARGET_ARCH="X86" \
   -DLLVM_UNREACHABLE_OPTIMIZE=ON  \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSTEM_NAME="Linux" \
   -DRUNTIMES_x86_64-linux-musl_BUILD_SHARED_LIBS=OFF \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_BUILD_TYPE=MinSizeRel \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_BUILD_WITH_INSTALL_RPATH=ON \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER=clang++-21 \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="-w -g0  -march=native  -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}  -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1  "  \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="-w -g0  -march=x86-64-v3  -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}  -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1  "  \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_STANDARD=20 \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER=clang-21 \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_LAUNCHER=ccache \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_TARGET="x86_64-linux-musl" \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS="-w -g0 -march=native   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_EXE_LINKER_FLAGS="  -Wl,--threads=8 --sysroot ${SYSROOT_DIR}  -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static   -static-libgcc  " \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS="-w -g0 -march=x86-64-v3   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_EXE_LINKER_FLAGS="  -Wl,--threads=8 --sysroot ${SYSROOT_DIR}  -march=x86-64-v3 -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static   -static-libgcc  " \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_PREFIX="${SYSROOT_DIR}" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_RPATH="\$ORIGIN/../lib" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSROOT="${SYSROOT_DIR}" \
@@ -552,6 +561,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   mkdir -p "${WORK_DIR}/stage3-build"
   cd "${WORK_DIR}/stage3-build"
   cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
+  -DCMAKE_SYSTEM_NAME="Linux" \
   -DBUILD_SHARED_LIBS=OFF  \
   -DCLANG_DEFAULT_CXX_STDLIB=libc++ \
   -DCLANG_DEFAULT_LINKER=lld \
@@ -567,14 +577,14 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DCMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
   -DCMAKE_CXX_COMPILER_WORKS=1 \
-  -DCMAKE_CXX_FLAGS=" -ffunction-sections -fdata-sections -w -g0  -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}   -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1  "  \
+  -DCMAKE_CXX_FLAGS=" -ffunction-sections -fdata-sections -w -g0  -march=x86-64-v3 -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}   -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1  "  \
   -DCMAKE_CXX_STANDARD=20 \
   -DCMAKE_C_COMPILER="${SYSROOT_DIR}/bin/clang" \
   -DCMAKE_C_COMPILER_LAUNCHER=ccache \
   -DCMAKE_C_COMPILER_TARGET="x86_64-linux-musl" \
   -DCMAKE_C_COMPILER_WORKS=1 \
-  -DCMAKE_C_FLAGS="  -ffunction-sections -fdata-sections   -w -g0 -march=native   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
-  -DCMAKE_EXE_LINKER_FLAGS="  --sysroot ${SYSROOT_DIR}  -Wl,--gc-sections -Wl,--threads=8  -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static  -static-libgcc " \
+  -DCMAKE_C_FLAGS="  -ffunction-sections -fdata-sections   -w -g0 -march=x86-64-v3   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
+  -DCMAKE_EXE_LINKER_FLAGS="  --sysroot ${SYSROOT_DIR}  -Wl,--gc-sections -Wl,--threads=8  -march=x86-64-v3 -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static  -static-libgcc " \
   -DCMAKE_INSTALL_PREFIX="${TOOLCHAIN_DIR}" \
   -DCMAKE_INSTALL_RPATH="\$ORIGIN/../lib" \
   -DCMAKE_SYSROOT="${SYSROOT_DIR}" \
@@ -685,7 +695,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_INCLUDE_EXAMPLES=OFF \
   -DLLVM_INCLUDE_TESTS=OFF \
   -DLLVM_INCLUDE_TOOLS=ON \
-  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+  -DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF \
   -DLLVM_INSTALL_UTILS=OFF \
   -DLLVM_LIBC_FULL_BUILD=OFF \
   -DLLVM_LIBC_INCLUDE_SCUDO=OFF \
@@ -697,19 +707,20 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_TARGETS_TO_BUILD=X86 \
   -DLLVM_TARGET_ARCH="X86" \
   -DLLVM_UNREACHABLE_OPTIMIZE=ON  \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSTEM_NAME="Linux" \
   -DRUNTIMES_x86_64-linux-musl_BUILD_SHARED_LIBS=OFF \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_BUILD_TYPE=MinSizeRel \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_BUILD_WITH_INSTALL_RPATH=ON \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER=clang++-21 \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER="${SYSROOT_DIR}/bin/clang++" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_LAUNCHER=ccache \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_COMPILER_TARGET="x86_64-linux-musl" \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="-w -g0  -march=native  -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}  -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1  "  \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_FLAGS="-w -g0  -march=x86-64-v3  -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -D_LIBCPP_PROVIDES_DEFAULT_RUNE_TABLE --sysroot ${SYSROOT_DIR}  -static -static-libgcc -nostdinc++ -isystem ${SYSROOT_DIR}/include/c++/v1  "  \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_CXX_STANDARD=20 \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER=clang-21 \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER="${SYSROOT_DIR}/bin/clang" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_LAUNCHER=ccache \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_C_COMPILER_TARGET="x86_64-linux-musl" \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS="-w -g0 -march=native   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
-  -DRUNTIMES_x86_64-linux-musl_CMAKE_EXE_LINKER_FLAGS=" --sysroot ${SYSROOT_DIR} -Wl,--threads=8 -march=native -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static   -static-libgcc  " \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_C_FLAGS="-w -g0 -march=x86-64-v3   -unwind=libunwind --rtlib=compiler-rt --sysroot ${SYSROOT_DIR} -static -static-libgcc " \
+  -DRUNTIMES_x86_64-linux-musl_CMAKE_EXE_LINKER_FLAGS=" --sysroot ${SYSROOT_DIR} -Wl,--threads=8 -march=x86-64-v3 -stdlib=libc++ -unwind=libunwind --rtlib=compiler-rt -static   -static-libgcc  " \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_PREFIX="${TOOLCHAIN_DIR}" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_INSTALL_RPATH="\$ORIGIN/../lib" \
   -DRUNTIMES_x86_64-linux-musl_CMAKE_SYSROOT="${SYSROOT_DIR}" \
@@ -814,7 +825,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DRUNTIMES_x86_64-linux-musl_LLVM_INCLUDE_EXAMPLES=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_INCLUDE_TESTS=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_INCLUDE_TOOLS=ON \
-  -DRUNTIMES_x86_64-linux-musl_LLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+  -DRUNTIMES_x86_64-linux-musl_LLVM_INSTALL_TOOLCHAIN_ONLY=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_INSTALL_UTILS=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_FULL_BUILD=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_LIBC_INCLUDE_SCUDO=OFF \
@@ -830,18 +841,18 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   ninja
   ninja  install
 
-  # Install kernel headers to sysroot
   cd "${SRC_DIR}/linux"
   make headers_install ARCH=x86_64 INSTALL_HDR_PATH="${TOOLCHAIN_DIR}/usr"
 
-  # Configure and build musl
   cd "${SRC_DIR}/musl"
-  # Clean previous builds if any
   make clean || true
 
   CC=clang CFLAGS="-O2 -flto=full -ffat-lto-objects -static " ./configure --prefix="${TOOLCHAIN_DIR}" --disable-shared
   make -j${JOBS} CC="${TOOLCHAIN_DIR}/bin/clang"
   make install
+
+  cp "${SCRIPT_DIR}/musl-clang" "${TOOLCHAIN_DIR}/bin/"
+  cp "${SCRIPT_DIR}/musl-clang++" "${TOOLCHAIN_DIR}/bin/"
 fi
 
 SCRIPT_DIR="${HOME}/x86_64-linux-llvm"
@@ -855,7 +866,7 @@ export ARCH=x86_64
 
 NO_WARNINGS_SUS=" -Wno-address-of-packed-member -Wno-int-in-bool-context  -Wno-format-truncation -Wno-self-assign -Wno-string-plus-int -Wno-shift-sign-overflow -Wno-string-conversion -Wno-class-varargs -Wno-array-bounds-pointer-arithmetic -Wno-alloca -Wno-bitfield-enum-conversion -Wno-anon-enum-enum-conversion -Wno-format-nonliteral -Wno-assign-enum -Wno-missing-variable-declarations -Wno-conditional-uninitialized -Wno-format-non-iso -Wno-format -Wno-switch-enum -Wno-bad-function-cast -Wno-tautological-value-range-compare -Wno-duplicate-enum -Wno-implicit-int-conversion -Wno-switch-default  -Wno-cast-align -Wno-cast-qual -Wno-sign-conversion -Wno-shorten-64-to-32 -Wno-sign-compare "
 NO_WARNINGS_COOL=" -Wno-implicit-int-float-conversion -Wno-misleading-indentation -Wno-float-conversion -Wno-cast-function-type-strict  -Wno-double-promotion  -Wno-unused-command-line-argument -Wno-unused-result -Wno-unused-variable -Wno-unused-function -Wno-missing-prototypes -Wno-missing-include-dirs -Wno-missing-field-initializers -Wno-undef -Wno-implicit-fallthrough -Wno-unreachable-code-break -Wno-unused-macros -Wno-comma -Wno-extra-semi-stmt  -Wno-compound-token-split-by-space -Wno-shadow -Wno-unreachable-code-return -Wno-unused-parameter -Wno-unreachable-code -Wno-covered-switch-default -Wno-redundant-parens -Wno-declaration-after-statement  -Wno-used-but-marked-unused -Wno-packed -Wno-c++98-compat -Wno-c2y-extensions -Wno-pedantic -Wno-pre-c11-compat -Wno-language-extension-token -Wno-c++-compat -Wno-disabled-macro-expansion -Wno-keyword-macro -Wno-c23-compat -Wno-variadic-macros -Wno-reserved-macro-identifier -Wno-unsafe-buffer-usage  -Wno-padded -Wno-missing-noreturn -Wno-gnu-conditional-omitted-operand -Wno-documentation -Wno-documentation-unknown-command -Wno-reserved-identifier "
-NO_WARNINGS=" -Wno-error -Weverything ${NO_WARNINGS_COOL} ${NO_WARNINGS_SUS}   "
+NO_WARNINGS=" -Wno-error -Weverything ${NO_WARNINGS_COOL}  ${NO_WARNINGS_SUS}   "
 
 # Define LLVM toolchain variables
 HOST_CC="clang-21"
