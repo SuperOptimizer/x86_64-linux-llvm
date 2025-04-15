@@ -177,7 +177,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_ENABLE_PIC=OFF \
   -DLLVM_ENABLE_PLUGINS=OFF \
   -DLLVM_ENABLE_RTTI=OFF \
-  -DLLVM_ENABLE_RUNTIMES="libc;compiler-rt;libunwind;libcxx;libcxxabi" \
+  -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi" \
   -DLLVM_ENABLE_THREADS=ON \
   -DLLVM_ENABLE_UNWIND_TABLES=OFF \
   -DLLVM_EXTERNALIZE_DEBUGINFO=OFF \
@@ -302,7 +302,8 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   # it links despite the fast that we are using llvm compiler rt etc. so create a dummpy libgcc_eh.a
   touch "${SYSROOT_DIR}/lib/libgcc_eh.a"
 
-
+  #we shouldn't really need to rebuild the runtimes here but if I dont i run into issues with
+  #compiler rt builtins and stuff and settings not getting reflected properly so lets just do both
   mkdir -p "${WORK_DIR}/stage2-build"
   cd "${WORK_DIR}/stage2-build"
   cmake -G Ninja "${SRC_DIR}/llvm-project/llvm" \
@@ -431,7 +432,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_ENABLE_PLUGINS=OFF \
   -DLLVM_ENABLE_PROJECTS="clang;lld" \
   -DLLVM_ENABLE_RTTI=OFF \
-  -DLLVM_ENABLE_RUNTIMES="libc;compiler-rt;libunwind;libcxx;libcxxabi" \
+  -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi" \
   -DLLVM_ENABLE_THREADS=ON \
   -DLLVM_ENABLE_UNWIND_TABLES=OFF \
   -DLLVM_EXTERNALIZE_DEBUGINFO=OFF \
@@ -687,7 +688,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DLLVM_ENABLE_PLUGINS=OFF \
   -DLLVM_ENABLE_PROJECTS="clang;lld" \
   -DLLVM_ENABLE_RTTI=OFF \
-  -DLLVM_ENABLE_RUNTIMES="libc;compiler-rt;libunwind;libcxx;libcxxabi" \
+  -DLLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi" \
   -DLLVM_ENABLE_THREADS=ON \
   -DLLVM_ENABLE_UNWIND_TABLES=OFF \
   -DLLVM_EXTERNALIZE_DEBUGINFO=OFF \
@@ -817,7 +818,7 @@ if [ ! -f "${TOOLCHAIN_DIR}/bin/clang" ]; then
   -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_PLUGINS=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_PROJECTS="clang;lld" \
   -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_RTTI=OFF \
-  -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_RUNTIMES="libc;compiler-rt;libunwind;libcxx;libcxxabi" \
+  -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_RUNTIMES="compiler-rt;libunwind;libcxx;libcxxabi" \
   -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_THREADS=ON \
   -DRUNTIMES_x86_64-linux-musl_LLVM_ENABLE_UNWIND_TABLES=OFF \
   -DRUNTIMES_x86_64-linux-musl_LLVM_EXTERNALIZE_DEBUGINFO=OFF \
